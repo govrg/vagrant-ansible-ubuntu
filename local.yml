@@ -1,0 +1,13 @@
+---
+- hosts: localhost
+  become: true
+
+  roles:
+    - { role: users, tags: ['users'] }
+    - { role: gnome, tags: ['gnome'] }
+    - { role: java, tags: ['java'] }
+##    - { role: androidsdk, tags: ['androidsdk'] }
+##    - { role: intellij, tags: ['intellij'] }
+    - {role: npmnode, tags: ['npmnode']}
+    - {role: docker, tags: ['docker']}
+    - {role: kubernetes, tags: ['kubernetes']}

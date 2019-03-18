@@ -1,0 +1,24 @@
+- name: Install gdm
+  apt: 
+    name: ['xserver-xorg', 'xfonts-base', 'xubuntu-desktop', 'gdm3']
+    state: "present"
+
+#- name: Install arc theme
+#  apt: 
+#    name: arc-theme
+
+- name: Install psutil package
+  apt: 
+    name: python-psutil
+
+- name: Install pexpect package
+  apt: 
+    name: python-pexpect    
+
+- name: restart login manager service
+  service: 
+    name: "gdm3"
+    state: "restarted"
+#- name: Rebooting the machine - This made ssh-host to be owned by root
+#  shell: reboot
+#  become: true

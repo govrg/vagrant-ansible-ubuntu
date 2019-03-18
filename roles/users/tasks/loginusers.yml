@@ -1,0 +1,23 @@
+- name: Create ubuntu login user
+  become_user: root
+  user:
+    name: ubuntu
+    password: '$6$2pmFYcUFCX$RsVtvt2wInXxJlflyYcXB3AuGRk9JKsRAcyCokA3xxZhI.7SBJsB4VJaykK/XAG1lp2PwqWuUnVYY9a3wX7YF1'
+    groups: sudo   # Empty by default.
+    state: present
+    shell: /bin/bash       # Defaults to /bin/bash
+    system: no             # Defaults to no
+    createhome: yes        # Defaults to yes
+    home: /home/ubuntu  # Defaults to /home/<username>
+
+- name: Creat vagrant login user
+  become_user: root
+  user:
+    name: vagrant
+    password: '$6$2pmFYcUFCX$RsVtvt2wInXxJlflyYcXB3AuGRk9JKsRAcyCokA3xxZhI.7SBJsB4VJaykK/XAG1lp2PwqWuUnVYY9a3wX7YF1'
+    groups: sudo   # Empty by default.
+    state: present
+    shell: /bin/bash       # Defaults to /bin/bash
+    system: no             # Defaults to no
+    createhome: yes        # Defaults to yes
+    home: /home/vagrant  # Defaults to /home/<username>

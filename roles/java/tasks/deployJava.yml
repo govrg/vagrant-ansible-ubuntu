@@ -1,0 +1,20 @@
+- name: Include version-specific variables for Ubuntu.
+  include_vars: "Ubuntu-18.yml"
+  become_user: vagrant
+  become: yes
+
+- name: Define java_packages.
+  set_fact:
+    java_packages: "{{ __java_packages | list }}"
+  when: java_packages is not defined
+
+# Setup/install tasks.
+- include_tasks: setup-Ubuntu.yml
+
+# Environment setup.
+- name: Set JAVA_HOME if configured.
+  lineinfile:
+    dest: /etc/environment
+    state: present
+    backrefs: no
+    line: "export JAVA_HOME='/usr/lib/jvm/java-1.8.0-openjdk-amd64'"

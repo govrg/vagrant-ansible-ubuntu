@@ -1,0 +1,12 @@
+- include: kubernetes.yml
+  become_user: root
+#  hosts: kube-master:kube-node
+  become: yes
+#- include: mastercluster-setup.yml
+  #become_user: root
+  #hosts: kube-master
+  #become: yes
+#- include: childcluster-setup.yml  
+  #become_user: root
+  #hosts: kube-node
+  #become: yes

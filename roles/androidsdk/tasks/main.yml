@@ -1,0 +1,3 @@
+- include: deployAndroidSdk.yml
+  become_user: root
+  become: yes

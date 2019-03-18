@@ -1,0 +1,79 @@
+- name: "Create Android SDK directory"
+  file:
+    path: /home/vagrant/android-sdk
+    state: directory
+    owner: vagrant
+    group: vagrant
+    mode: 0777
+
+- name: "Download and decompress Android-SDK from {{ linux_android_commandline_url }}"
+  unarchive: 
+    copy: no
+    src: "{{ linux_android_commandline_url }}"
+    dest: /home/vagrant/android-sdk/
+    force: yes
+    owner: vagrant
+    group: vagrant
+    mode: 0755
+
+- name: "Change the owner for the files"
+  shell: /home/vagrant/android-sdk/tools/bin/sdkmanager --update
+
+- name: "Add new path into user environment"
+  become_user: root
+  lineinfile:
+    dest: /etc/environment
+    state: present
+    backrefs: no
+    line: "export ANDROID_AVD_HOME=/home/vagrant/android-sdk/tools/bin:$ANDROID_AVD_HOME\nexport ANDROID_SDK_HOME=/home/vagrant/android-sdk:$ANDROID_SDK_HOME\nexport PATH=$PATH:$ANDROID_SDK_HOME/tools\nexport PATH=$PATH:$ANDROID_SDK_HOME/tools/bin"
+
+- name: "Show list of available packages"
+  shell: /home/vagrant/android-sdk/tools/android list sdk --all
+  register: list
+
+- name: "Install platforms android-26 build-tools m2repository"
+  become_user: vagrant
+  become: yes
+  expect: 
+    command: ./sdkmanager "platforms;android-26" "build-tools;26.0.3" "extras;google;m2repository" "extras;android;m2repository"
+    chdir: /home/vagrant/android-sdk/tools/bin
+    responses:
+        '.*license.*': "y"
+    echo: yes
+    timeout: 300
+
+#- name: "Install tools google_apis;x86_64"
+  #expect: 
+    #command: ./sdkmanager "system-images;android-25;google_apis;x86_64"
+    #chdir: /home/vagrant/android-sdk/tools/bin
+    #responses:
+    #    '.*license.*': "y"
+    #echo: yes
+    #timeout: 300
+
+- name: "Touch repositories.cfg"
+  shell: touch /home/vagrant/.android/repositories.cfg    
+
+#use 24 or 25 that has non Google-APIs  and has an ARM emulateor 
+- name: "Install tools android-25 google_apis armeabi-v7a"
+  become_user: vagrant
+  become: yes
+  expect: 
+    command: ./sdkmanager "system-images;android-25;google_apis;armeabi-v7a"
+    chdir: /home/vagrant/android-sdk/tools/bin
+    responses:
+        '.*license.*': "y"
+    echo: yes
+    timeout: 300
+
+- name: "SDK update"
+  shell: /home/vagrant/android-sdk/tools/bin/sdkmanager --update
+  
+- name: Change own
+  shell:  sudo chown -R vagrant:vagrant /home/vagrant/android-sdk/
+
+#Create an avd (Android Virtual Device) with a name TestAvd and device Nexus 5X
+- name: Creat emulator TestAvdArmV7a with android-25
+  become_user: vagrant
+  become: yes
+  shell: ~/android-sdk/tools/bin/avdmanager create avd -n TestAvdArmV7a -k "system-images;android-25;google_apis;armeabi-v7a" -d "Nexus 5X"

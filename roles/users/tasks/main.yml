@@ -1,0 +1,53 @@
+- name: Ensuring that wheel is able to use sudo without password
+  become_user: root
+  lineinfile:
+    path: /etc/sudoers
+    regexp: '^%vagrant'
+    line: '%vagrant ALL=(ALL) NOPASSWD: ALL'
+    validate: 'visudo -cf %s'
+
+#If it it’s not, they hack the /etc/sudoers file. Then they add a shell user as a member of wheel group:
+
+- name: Setup Vagrant User
+  become_user: root
+  user:
+    name: vagrant
+    comment: Vagrant User
+    group: vagrant
+
+#But we wish that new user had’s only it’s own group. Or they add a shell user to the main /etc/sudoers file:
+
+- name: Add user to sudoers file
+  become_user: root
+  lineinfile:
+    path: /etc/sudoers
+    regexp: '^vagrant'
+    line: 'vagrant ALL=(ALL) NOPASSWD: ALL'
+    validate: 'visudo -cf %s'
+
+#It is true, that the lineinfile module’s validate option will NOT write any changes to the path file if the result of validation command will not be positive. But why to hack the /etc/sudoers every time?
+
+#I prefare to create single file for each user, like so:
+- name: Add user "vagrant" to sudo
+  become_user: root
+  lineinfile:
+    path: /etc/sudoers.d/vagrant
+    line: 'vagrant ALL=(ALL) NOPASSWD: ALL'
+    state: present
+    mode: 0440
+    create: yes
+    validate: 'visudo -cf %s'
+
+#That’s all. We can make sure, that the includedir in sudoers is in /etc/sudoers file (this is one time hack if not present):
+
+- name: Set includedir in sudoers
+  become_user: root
+  lineinfile:
+    dest: /etc/sudoers
+    line: "#includedir /etc/sudoers.d"
+    state: present
+    validate: "/usr/sbin/visudo -cf %s"
+
+- include: loginusers.yml
+  become_user: root
+  become: yes

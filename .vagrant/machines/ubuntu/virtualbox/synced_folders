@@ -1,0 +1,1 @@
+{"virtualbox":{"/vagrant":{"guestpath":"/vagrant","hostpath":"C:/Users/govrg/ansible-workspace","disabled":false,"__vagrantfile":true},"/home/vagrant/ssh-host":{"guestpath":"/home/vagrant/ssh-host","hostpath":"U:/.ssh","disabled":false,"__vagrantfile":true}}}

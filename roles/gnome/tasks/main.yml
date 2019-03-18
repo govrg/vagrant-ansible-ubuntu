@@ -1,0 +1,6 @@
+- include: packages.yml
+  become_user: root
+  become: yes
+- include: gnome.yml
+  become_user: root
+  become: yes

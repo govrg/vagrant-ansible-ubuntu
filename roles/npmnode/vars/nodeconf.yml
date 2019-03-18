@@ -1,0 +1,5 @@
+homeDir: /vagrant
+appDir : app
+repo: myfirstgoimage
+account: govrg
+privateKey: /home/vagrant/ssh-host/id_rsa

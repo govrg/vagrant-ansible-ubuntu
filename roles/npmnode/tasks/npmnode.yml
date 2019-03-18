@@ -1,0 +1,25 @@
+- name: Include version-specific variables 
+  include_vars: "nodeconf.yml"
+  become_user: vagrant
+  become: yes
+
+- name: Install Packages
+  apt: 
+    name: ['npm', 'nodejs', 'nodejs', build-essential] 
+    update_cache: yes
+    state: latest
+
+- name: Create APP Directory
+  become_user: vagrant
+  become: yes
+  file: 
+    path: "{{homeDir}}/{{appDir}}"
+    state: directory
+
+- name: Copy Private Key
+  become_user: vagrant
+  become: yes
+  copy: 
+    src: "{{privateKey}}"
+    dest: "{{homeDir}}"
+    mode: 0600

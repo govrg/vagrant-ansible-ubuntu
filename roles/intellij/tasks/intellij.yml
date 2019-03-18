@@ -1,0 +1,95 @@
+- name: Install needed dependancies
+  action: '{{ ansible_pkg_mgr }}'
+  with_items:
+    - tar
+    - unzip
+  tags: ["packages","intellij"]
+
+- name: Find latest version
+  uri:
+    url: "https://data.services.jetbrains.com/products/releases?code=IIU%2CIIC&latest=true&type=release"
+    return_content: yes
+    validate_certs: no
+    body_format: json
+  register: intellij_releases_response
+  when: intellij_version == 'latest'
+  tags: ["packages","intellij"]
+
+- name: Intellij register
+  set_fact:
+    intellij_version: "{{ intellij_releases_response.json.IIC.0.version }}"
+  when: intellij_version == 'latest'
+  tags: ["packages","intellij"]
+
+- name: Download intellij
+  get_url:
+    url: '{{intellij_url}}'
+    dest: '{{intellij_tmp}}'
+  tags: ["packages","intellij"]
+
+- name: Ensure installation directory
+  file:
+    state: directory
+    mode: 0755
+    dest: '{{intellij_install_dir}}'
+  tags: ["packages","intellij"]
+
+- name: Unarchive intellij
+  unarchive:
+    copy: no
+    src: '{{intellij_tmp}}'
+    dest: '{{intellij_install_dir}}'
+  tags: ["packages","intellij"]
+
+
+- name: Change own
+  shell:  sudo chown -R vagrant:vagrant '{{intellij_install_dir}}'  
+
+- name: Retreive intellij dir name
+  command: ls -t '{{intellij_install_dir}}'
+  register: result_intellij_folder_name
+  tags: ["configuration","intellij"]
+
+- name: "Add IDEA_HOME path into user environment"
+  lineinfile:
+    dest: /etc/environment
+    state: present
+    backrefs: no
+    line: "export IDEA_HOME=/opt/intellij/{{intellij_folder_name}}/bin:$IDEA_HOME\nexport PATH=$PATH:$IDEA_HOME/bin"
+    backup: yes
+
+- name: "Touch opt/IDEA"
+  shell: touch /opt/IDEA       
+
+- name: "Add IDEA_HOME in and pass into user environment"
+  lineinfile:
+    dest: /opt/IDEA
+    state: present
+    backrefs: no
+    line: "export IDEA_HOME=/opt/intellij/{{intellij_folder_name}}/bin$IDEA_HOME\n$IDEA_HOME/idea.sh $*"
+    backup: yes    
+
+- name: Ensure intellij is configured
+  template: 
+    src: idea.properties.j2
+    dest: '{{intellij_install_dir}}/{{intellij_folder_name}}/bin/idea.properties'
+  tags: ["configuration","intellij"]
+
+- name: Ensure intellij bin exist
+  template: 
+    src: intellij.j2 
+    dest: /usr/bin/intellij 
+    mode: 755
+  tags: ["configuration","intellij"]
+
+- name: Ensure intellij shortcut is present
+  template: 
+    src: intellij.desktop.j2
+    dest: /usr/share/applications/intellij.desktop
+  tags: ["configuration","intellij"]
+
+- name: source the environment
+  become_user: vagrant
+  become: yes
+  command: source /etc/environment
+  tags: ["intellij"]
