@@ -1,7 +1,7 @@
 $set_environment_variables = <<SCRIPT
 tee "/etc/profile.d/myvars.sh" > "/dev/null" <<EOF
 # Ansible environment variables.
-export ansible_ssh_user=#{ENV['ANSIBLE_SSH_USR']}
+export ansible_usr=#{ENV['ANSIBLE_USR']}
 export ansible_ssh_pass=#{ENV['ANSIBLE_SSH_PASS']}
 
 # User for ssh environment variables.
