@@ -1,9 +1,9 @@
 
 [master]
-master1 ansible_host=192.168.33.101 ansible_user=vagrant ansible_ssh_pass=vagrant
+master1 ansible_host=192.168.33.101 ansible_user=vagrant ansible_ssh_pass="{{ ssh_pass }}"
 
 [workers]
-worker1 ansible_host=192.168.33.102 ansible_user=vagrant ansible_ssh_pass=vagrant
+worker1 ansible_host=192.168.33.102 ansible_user=vagrant ansible_ssh_pass="{{ ssh_pass }}"
 
 [all:vars]
 ansible_python_interpreter=/usr/bin/python3

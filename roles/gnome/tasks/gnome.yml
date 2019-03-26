@@ -1,11 +1,7 @@
-- name: Install gdm
-  apt: 
-    name: ['xserver-xorg', 'xfonts-base', 'xubuntu-desktop', 'gdm3']
-    state: "present"
-
-#- name: Install arc theme
+#- name: Install gdm #if gnome GUI wanted the enable this one
 #  apt: 
-#    name: arc-theme
+#    name: ['xserver-xorg', 'xfonts-base', 'xubuntu-desktop', 'gdm3']
+#    state: "present"
 
 - name: Install psutil package
   apt: 
@@ -15,10 +11,7 @@
   apt: 
     name: python-pexpect    
 
-- name: restart login manager service
-  service: 
-    name: "gdm3"
-    state: "restarted"
-#- name: Rebooting the machine - This made ssh-host to be owned by root
-#  shell: reboot
-#  become: true
+#- name: restart login manager service
+#  service: 
+#    name: "gdm3"
+#    state: "restarted"
